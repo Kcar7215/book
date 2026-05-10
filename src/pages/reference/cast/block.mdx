@@ -37,10 +37,9 @@ Options:
           [aliases: --jobs]
 
 Rpc options:
-  -r, --rpc-url <RPC_URL>
+  -r, --rpc-url <URL>
           The RPC endpoint
           
-          [env: ETH_RPC_URL=]
           [aliases: --fork-url]
 
   -k, --insecure
@@ -117,11 +116,8 @@ Rpc options:
 
   -n, --network <NETWORK>
           Specify the Network for correct encoding
-
-          Possible values:
-          - ethereum: Ethereum (default)
-          - optimism: Optimism / OP-stack
-          - tempo:    Tempo
+          
+          [possible values: ethereum, tempo]
 
 Display options:
       --color <COLOR>

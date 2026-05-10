@@ -226,10 +226,9 @@ Watch options:
           overloading disk I/O.
 
 EVM options:
-  -r, --rpc-url <RPC_URL>
+  -r, --rpc-url <URL>
           The RPC endpoint
           
-          [env: ETH_RPC_URL=]
           [aliases: --fork-url]
 
   -k, --insecure
@@ -382,14 +381,13 @@ Executor environment config:
           changes
 
 Networks:
-      --optimism
-          Enable Optimism network features
+  -n, --network <NETWORK>
+          Enable a specific network family
+          
+          [possible values: ethereum, tempo]
 
       --celo
           Enable Celo network features
-
-      --tempo
-          Enable Tempo network features
 
 Display options:
       --color <COLOR>

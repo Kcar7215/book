@@ -26,12 +26,12 @@ Options:
           Number of threads to use. Specifying 0 defaults to the number of
           logical cores
           
-          [aliases: --jobs]
+          [alias: --jobs]
 
       --target-contract <CONTRACT_NAME>
           The name of the contract you want to run
           
-          [aliases: --tc]
+          [alias: --tc]
 
   -s, --sig <SIG>
           The signature of the function you want to call in the contract, or raw
@@ -48,6 +48,27 @@ Options:
           Use legacy transactions instead of EIP1559 ones.
           
           This is auto-enabled for common networks without EIP1559.
+
+      --estimate <PRESET>
+          How to estimate EIP-1559 fees: `low`, `market` (default), or
+          `aggressive`.
+          
+          The preset sets the priority-fee percentile and the `maxFeePerGas`
+          buffer (`low`: `base_fee * 1.5`, others: `* 2`); `low`'s tighter
+          buffer is more likely to stall if the base fee rises.
+          `--with-gas-price` and `--priority-gas-price` override only
+          `maxFeePerGas` and `maxPriorityFeePerGas` respectively. Ignored for
+          `--legacy`.
+
+          Possible values:
+          - low:        Lower priority-fee percentile (10th) and a tighter
+            base-fee buffer (`base_fee * 1.5`). This only lowers the tip
+            estimate and the max-fee cap, not the base fee that is actually
+            paid, and risks the transaction stalling if the base fee rises
+          - market:     Default: `base_fee * 2` plus a 20th-percentile priority
+            fee
+          - aggressive: Higher priority-fee percentile (50th) to bid a larger
+            tip for faster inclusion
 
       --broadcast
           Broadcasts the transactions
@@ -87,14 +108,6 @@ Display options:
       --json
           Format log messages as JSON
 
-      --machine
-          Activate the agent contract: disables color and wraps CLI-runtime
-          exits (parse / usage / help / version) in a structured envelope.
-          Per-command machine output (declared `output_mode`, progress and
-          prompt suppression, canonical exit codes) is adopted incrementally —
-          see `docs/agents/spec.md` §10. Mutually exclusive with `--json` and
-          `--md` to keep machine-mode output unambiguous
-
       --md
           Format log messages as Markdown
 
@@ -115,10 +128,12 @@ Tempo:
           the session's temporary access key on behalf of its root account.
 
       --tempo.fee-token <FEE_TOKEN>
-          Fee token address for Tempo transactions.
+          Fee token address, numeric TIP-20 token id, or known symbol for Tempo
+          transactions.
           
           When set, builds a Tempo (type 0x76) transaction that pays gas fees in
-          the specified token.
+          the specified token. Known symbols are PathUSD, AlphaUSD, BetaUSD, and
+          ThetaUSD.
           
           If this is not set, the fee token is chosen according to network
           rules. See the Tempo docs for more information.
@@ -290,6 +305,10 @@ Tempo:
           
           [default: 130]
 
+      --sender-nonce <NONCE>
+          Override the sender's initial nonce for script execution and
+          transaction generation
+
       --unlocked
           Send via `eth_sendTransaction` using the `--sender` argument as sender
 
@@ -310,6 +329,15 @@ Tempo:
           Open the script in the debugger.
           
           Takes precedence over broadcast.
+
+      --debug-layout <DEBUG_LAYOUT>
+          Debugger layout to use
+
+          Possible values:
+          - auto:       Select horizontal or vertical layout from the terminal
+            size
+          - horizontal: Force the two-column debugger layout
+          - vertical:   Force the single-column debugger layout
 
       --dump <PATH>
           Dumps all debugger steps to file
@@ -408,9 +436,6 @@ Compiler options:
           
           Missing solc versions will not be installed.
 
-      --via-ir
-          Use the Yul intermediate representation compilation pipeline
-
       --use-literal-content
           Changes compilation to only use literal content and not URLs
 
@@ -439,6 +464,22 @@ Compiler options:
           parameter of `1` will produce short but expensive code. In contrast, a
           larger `optimizer_runs` parameter will produce longer but more gas
           efficient code
+
+      --via-ir
+          Use the Yul intermediate representation compilation pipeline
+
+      --via-ssa-cfg
+          Turn on SSA CFG-based code generation via the IR (experimental).
+          
+          This passes `--via-ssa-cfg` to solc. Implies `--via-ir`. Requires
+          `--experimental` to be set (as of Solidity 0.8.35+). This is false by
+          default.
+
+      --experimental
+          Enable Solidity's experimental mode.
+          
+          This passes `--experimental` to solc, which is required by Solidity
+          0.8.35+ for experimental features.
 
       --extra-output <SELECTOR>...
           Extra output to include in the contract's artifact.
@@ -496,7 +537,7 @@ Project options:
           This is the same as using: `--contracts contracts --lib-paths
           node_modules`.
           
-          [aliases: --hh]
+          [alias: --hh]
 
       --config-path <FILE>
           Path to the config file
@@ -541,14 +582,14 @@ Wallet options - keystore:
           Use the keystore by its filename in the given folder
           
           [env: ETH_KEYSTORE=]
-          [aliases: --keystores]
+          [alias: --keystores]
 
       --account <ACCOUNT_NAMES>
           Use a keystore from the default keystores folder
           (~/.foundry/keystores) by its filename
           
           [env: ETH_KEYSTORE_ACCOUNT=]
-          [aliases: --accounts]
+          [alias: --accounts]
 
       --password <PASSWORDS>
           The keystore password.
@@ -608,7 +649,7 @@ EVM options:
   -r, --rpc-url <URL>
           The RPC endpoint
           
-          [aliases: --fork-url]
+          [alias: --fork-url]
 
   -k, --insecure
           Allow insecure RPC connections (accept invalid HTTPS certificates).
@@ -649,7 +690,7 @@ EVM options:
           See also
           [https://docs.alchemy.com/reference/compute-units#what-are-cups-compute-units-per-second](https://docs.alchemy.com/reference/compute-units#what-are-cups-compute-units-per-second)
           
-          [aliases: --no-rate-limit]
+          [alias: --no-rate-limit]
 
       --fork-block-number <BLOCK>
           Fetch state from a specific block number over a remote endpoint.
@@ -704,7 +745,7 @@ Executor environment config:
       --chain <CHAIN>
           The chain name or EIP-155 chain ID
           
-          [aliases: --chain-id]
+          [alias: --chain-id]
 
       --gas-price <GAS_PRICE>
           The gas price
@@ -712,7 +753,7 @@ Executor environment config:
       --block-base-fee-per-gas <FEE>
           The base fee in a block
           
-          [aliases: --base-fee]
+          [alias: --base-fee]
 
       --tx-origin <ADDRESS>
           The transaction origin
@@ -735,7 +776,7 @@ Executor environment config:
       --block-gas-limit <BLOCK_GAS_LIMIT>
           The block gas limit
           
-          [aliases: --gas-limit]
+          [alias: --gas-limit]
 
       --memory-limit <MEMORY_LIMIT>
           The memory limit per EVM execution in bytes. If this limit is
@@ -751,13 +792,16 @@ Executor environment config:
       --enable-tx-gas-limit
           Whether to enable tx gas limit checks as imposed by Osaka (EIP-7825)
           
-          [aliases: --tx-gas-limit]
+          [alias: --tx-gas-limit]
 
       --isolate
           Whether to enable isolation of calls. In isolation mode all top-level
           calls are executed as a separate transaction in a separate EVM
           context, enabling more precise gas accounting and transaction state
           changes
+
+      --no-isolate
+          Whether to disable isolation of calls
 
       --retries <RETRIES>
           Number of attempts for retrying verification

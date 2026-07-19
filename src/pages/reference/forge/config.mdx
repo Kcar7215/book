@@ -25,7 +25,7 @@ Options:
           Number of threads to use. Specifying 0 defaults to the number of
           logical cores
           
-          [aliases: --jobs]
+          [alias: --jobs]
 
 Build options:
       --names
@@ -44,7 +44,7 @@ Build options:
           Equivalent to setting `lint_on_build = false` under `[lint]` in
           foundry.toml, but only for the current command.
           
-          [aliases: --skip-lint]
+          [alias: --skip-lint]
 
       --no-cache
           Disable the cache
@@ -103,9 +103,6 @@ Compiler options:
           
           Missing solc versions will not be installed.
 
-      --via-ir
-          Use the Yul intermediate representation compilation pipeline
-
       --use-literal-content
           Changes compilation to only use literal content and not URLs
 
@@ -134,6 +131,22 @@ Compiler options:
           parameter of `1` will produce short but expensive code. In contrast, a
           larger `optimizer_runs` parameter will produce longer but more gas
           efficient code
+
+      --via-ir
+          Use the Yul intermediate representation compilation pipeline
+
+      --via-ssa-cfg
+          Turn on SSA CFG-based code generation via the IR (experimental).
+          
+          This passes `--via-ssa-cfg` to solc. Implies `--via-ir`. Requires
+          `--experimental` to be set (as of Solidity 0.8.35+). This is false by
+          default.
+
+      --experimental
+          Enable Solidity's experimental mode.
+          
+          This passes `--experimental` to solc, which is required by Solidity
+          0.8.35+ for experimental features.
 
       --extra-output <SELECTOR>...
           Extra output to include in the contract's artifact.
@@ -191,7 +204,7 @@ Project options:
           This is the same as using: `--contracts contracts --lib-paths
           node_modules`.
           
-          [aliases: --hh]
+          [alias: --hh]
 
       --config-path <FILE>
           Path to the config file
@@ -237,7 +250,7 @@ EVM options:
   -r, --rpc-url <URL>
           The RPC endpoint
           
-          [aliases: --fork-url]
+          [alias: --fork-url]
 
   -k, --insecure
           Allow insecure RPC connections (accept invalid HTTPS certificates).
@@ -278,7 +291,7 @@ EVM options:
           See also
           [https://docs.alchemy.com/reference/compute-units#what-are-cups-compute-units-per-second](https://docs.alchemy.com/reference/compute-units#what-are-cups-compute-units-per-second)
           
-          [aliases: --no-rate-limit]
+          [alias: --no-rate-limit]
 
       --fork-block-number <BLOCK>
           Fetch state from a specific block number over a remote endpoint.
@@ -333,7 +346,7 @@ Executor environment config:
       --chain <CHAIN>
           The chain name or EIP-155 chain ID
           
-          [aliases: --chain-id]
+          [alias: --chain-id]
 
       --gas-price <GAS_PRICE>
           The gas price
@@ -341,7 +354,7 @@ Executor environment config:
       --block-base-fee-per-gas <FEE>
           The base fee in a block
           
-          [aliases: --base-fee]
+          [alias: --base-fee]
 
       --tx-origin <ADDRESS>
           The transaction origin
@@ -364,7 +377,7 @@ Executor environment config:
       --block-gas-limit <BLOCK_GAS_LIMIT>
           The block gas limit
           
-          [aliases: --gas-limit]
+          [alias: --gas-limit]
 
       --memory-limit <MEMORY_LIMIT>
           The memory limit per EVM execution in bytes. If this limit is
@@ -380,13 +393,16 @@ Executor environment config:
       --enable-tx-gas-limit
           Whether to enable tx gas limit checks as imposed by Osaka (EIP-7825)
           
-          [aliases: --tx-gas-limit]
+          [alias: --tx-gas-limit]
 
       --isolate
           Whether to enable isolation of calls. In isolation mode all top-level
           calls are executed as a separate transaction in a separate EVM
           context, enabling more precise gas accounting and transaction state
           changes
+
+      --no-isolate
+          Whether to disable isolation of calls
 
 Networks:
   -n, --network <NETWORK>
@@ -408,14 +424,6 @@ Display options:
 
       --json
           Format log messages as JSON
-
-      --machine
-          Activate the agent contract: disables color and wraps CLI-runtime
-          exits (parse / usage / help / version) in a structured envelope.
-          Per-command machine output (declared `output_mode`, progress and
-          prompt suppression, canonical exit codes) is adopted incrementally —
-          see `docs/agents/spec.md` §10. Mutually exclusive with `--json` and
-          `--md` to keep machine-mode output unambiguous
 
       --md
           Format log messages as Markdown
